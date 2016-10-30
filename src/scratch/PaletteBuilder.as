@@ -42,6 +42,7 @@ import ui.media.MediaLibrary;
 import ui.parts.UIPart;
 
 import uiwidgets.*;
+import util.*;
 
 public class PaletteBuilder {
 
@@ -57,7 +58,7 @@ public class PaletteBuilder {
 			'Stage selected:', 'No motion blocks',
 			'Make a Block', 'Make a List', 'Make a Variable',
 			'New List', 'List name', 'New Variable', 'Variable name',
-			'New Block', 'Add an Extension'];
+			'New Block', 'Add an Extension', 'when Stage clicked'];
 	}
 
 	public function showBlocksForCategory(selectedCategory:int, scrollToOrigin:Boolean, shiftKey:Boolean = false):void {
@@ -67,6 +68,8 @@ public class PaletteBuilder {
 
 		if (selectedCategory == Specs.dataCategory) return showDataCategory();
 		if (selectedCategory == Specs.myBlocksCategory) return showMyBlocksPalette(shiftKey);
+		if (selectedCategory == Specs.metasCategory) return showMetasCategory();
+		if (selectedCategory == Specs.cloudServerCategory) return showCloudServerCategory();
 
 		var catName:String = Specs.categories[selectedCategory][1];
 		var catColor:int = Specs.blockColor(selectedCategory);
@@ -138,7 +141,8 @@ public class PaletteBuilder {
 			nextY += 5;
 		}
 
-		addExtensionButtons();
+		// addExtensionButtons();
+
 		for each (var ext:* in app.extensionManager.enabledExtensions()) {
 			addExtensionSeparator(ext);
 			addBlocksForExtension(ext);
@@ -380,7 +384,7 @@ public class PaletteBuilder {
 				// Open in the tips window if the URL starts with /info/ and another tab otherwise
 				if (ext.url.indexOf('/info/') === 0) app.showTip(ext.url);
 				else if (ext.url.indexOf('http') === 0) navigateToURL(new URLRequest(ext.url));
-				else DialogBox.notify('Extensions', 'Unable to load about page: the URL given for extension "' + ext.displayName + '" is not formatted correctly.');
+				else DialogBox.notify('Extensions', 'Unable to load about page: the URL given for extension "' + ext.name + '" is not formatted correctly.');
 			}
 		}
 
@@ -390,7 +394,7 @@ public class PaletteBuilder {
 		}
 
 		var m:Menu = new Menu();
-		m.addItem(Translator.map('About') + ' ' + ext.displayName + ' ' + Translator.map('extension') + '...', showAbout, !!ext.url);
+		m.addItem(Translator.map('About') + ' ' + ext.name + ' ' + Translator.map('extension') + '...', showAbout, !!ext.url);
 		m.addItem('Remove extension blocks', hideExtension);
 
 		var extensionDevManager:ExtensionDevManager = Scratch.app.extensionManager as ExtensionDevManager;
@@ -423,7 +427,7 @@ public class PaletteBuilder {
 
 		nextY += 7;
 
-		var titleButton:IconButton = UIPart.makeMenuButton(ext.displayName, extensionMenu, true, CSS.textColor);
+		var titleButton:IconButton = UIPart.makeMenuButton(ext.name, extensionMenu, true, CSS.textColor);
 		titleButton.x = 5;
 		titleButton.y = nextY;
 		app.palette.addChild(titleButton);
@@ -497,13 +501,13 @@ public class PaletteBuilder {
 
 	private function addBlocksForExtension(ext:ScratchExtension):void {
 		var blockColor:int = Specs.extensionsColor;
-		var opPrefix:String = ext.useScratchPrimitives ? '' : ext.name + ExtensionManager.extensionSeparator;
+		var opPrefix:String = ext.useScratchPrimitives ? '' : ext.name + '.';
 		for each (var spec:Array in ext.blockSpecs) {
 			if (spec.length >= 3) {
 				var op:String = opPrefix + spec[2];
 				var defaultArgs:Array = spec.slice(3);
 				var block:Block = new Block(spec[1], spec[0], blockColor, op, defaultArgs);
-				var showCheckbox:Boolean = (block.isReporter && !block.isRequester && defaultArgs.length == 0);
+				var showCheckbox:Boolean = (spec[0] == 'r' && defaultArgs.length == 0);
 				if (showCheckbox) addReporterCheckbox(block);
 				addItem(block, showCheckbox);
 			} else {
@@ -529,6 +533,144 @@ public class PaletteBuilder {
 		line.y = y;
 		app.palette.addChild(line);
 	}
+
+	// Show Metas Category
+	private function showMetasCategory():void {
+		
+		if (BoardSelector.instance().getSelectedBoard() == BoardSelector.METAS_3_PORT ||
+			BoardSelector.instance().getSelectedBoard() == BoardSelector.METAS_8_PORT) {
+			// BoardSelector.instance().getSelectedBoard() == BoardSelector.METAS_WIRELESS) {
+
+			addMetasCategorySeparator();	
+
+			// var metasOutputColor:int = Specs.metasOutputColor;
+			addBlocksForCategory(Specs.metasOutputDigitalCategory, Specs.metasOutputDigitalColor);
+			addBlocksForCategory(Specs.metasOutputAnalogCategory, Specs.metasOutputAnalogColor);
+			if (BoardSelector.instance().getSelectedBoard() != BoardSelector.METAS_3_PORT) {
+				addBlocksForCategory(Specs.metasInputDigitalCategory, Specs.metasInputDigitalColor);
+			}
+			addBlocksForCategory(Specs.metasInputAnalogCategory, Specs.metasInputAnalogColor);
+		}
+		if (BoardSelector.instance().getSelectedBoard() == BoardSelector.METAS_WIRELESS) {
+			addMetasCategorySeparator();	
+
+			// var metasOutputColor:int = Specs.metasOutputColor;
+			addBlocksForCategory(Specs.metasOutputDigitalCategory, Specs.metasOutputDigitalColor);
+			addBlocksForCategory(Specs.metasOutputAnalogCategory, Specs.metasOutputAnalogColor);
+			addBlocksForCategory(Specs.metasInputDigital8266Category, Specs.metasInputDigitalColor);
+			addBlocksForCategory(Specs.metasInputAnalogCategory, Specs.metasInputAnalogColor);
+			addBlocksForCategory(Specs.metasComboCategory, Specs.metasColor);
+        }
+		else if (BoardSelector.instance().getSelectedBoard() == BoardSelector.ARDUINO_UNO) {
+			addArduinoCategorySeparator();
+			addBlocksForCategory(Specs.arduinoCategory, Specs.arduinoColor);
+		}
+	}
+
+	protected function addMetasCategorySeparator():void {
+
+		function showAbout():void {
+			navigateToURL(new URLRequest('http://www.funmetas.com'));
+		}
+
+		function extensionMenu(ignore:*):void {
+			var m:Menu = new Menu();
+			m.addItem(Translator.map('About Metas'), showAbout);
+			m.showOnStage(app.stage);
+		}
+
+		nextY += 7;
+
+		var titleButton:IconButton = UIPart.makeMenuButton('Metas', extensionMenu, true, CSS.textColor);
+		titleButton.x = 5;
+		titleButton.y = nextY;
+		app.palette.addChild(titleButton);
+
+		var x:int = titleButton.width + 12;
+		var w:int = pwidth - x - 48;
+		addLine(x, nextY + 8, w);
+
+		var indicator:IndicatorLight = DeviceManager.instance().setIndicator();
+
+		indicator.x = pwidth - 40;
+		indicator.y = nextY + 2;
+		app.palette.addChild(indicator);
+
+		nextY += titleButton.height + 10;
+	}
+
+	protected function addArduinoCategorySeparator():void {
+
+		function showAbout():void {
+			navigateToURL(new URLRequest('http://arduino.cc'));
+		}
+
+		function extensionMenu(ignore:*):void {
+			var m:Menu = new Menu();
+			m.addItem(Translator.map('About Arduino'), showAbout);
+			m.showOnStage(app.stage);
+		}
+
+		nextY += 7;
+
+		var titleButton:IconButton = UIPart.makeMenuButton('Arduino', extensionMenu, true, CSS.textColor);
+		titleButton.x = 5;
+		titleButton.y = nextY;
+		app.palette.addChild(titleButton);
+
+		var x:int = titleButton.width + 12;
+		var w:int = pwidth - x - 48;
+		addLine(x, nextY + 8, w);
+
+		var indicator:IndicatorLight = DeviceManager.instance().setIndicator();
+
+		indicator.x = pwidth - 40;
+		indicator.y = nextY + 2;
+		app.palette.addChild(indicator);
+
+		nextY += titleButton.height + 10;
+	}
+
+	// Show Cloud Server Category
+	private function showCloudServerCategory():void {
+		addCloudServerCategorySeparator();	
+		
+		var catColor:int = Specs.cloudServerColor;
+		addBlocksForCategory(Specs.cloudServerCategory, catColor);
+	}
+
+	protected function addCloudServerCategorySeparator():void {
+
+		function showAbout():void {
+			navigateToURL(new URLRequest('http://www.coding101.hk'));
+		}
+
+		function extensionMenu(ignore:*):void {
+			var m:Menu = new Menu();
+			m.addItem(Translator.map('About Coding101'), showAbout);
+			m.showOnStage(app.stage);
+		}
+
+		nextY += 7;
+
+		var titleButton:IconButton = UIPart.makeMenuButton('Cloud Server', extensionMenu, true, CSS.textColor);
+		titleButton.x = 5;
+		titleButton.y = nextY;
+		app.palette.addChild(titleButton);
+
+		var x:int = titleButton.width + 12;
+		var w:int = pwidth - x - 48;
+		addLine(x, nextY + 8, w);
+
+		var indicator:IndicatorLight = app.cloudServer.setIndicator();
+
+		indicator.x = pwidth - 40;
+		indicator.y = nextY + 2;
+		app.palette.addChild(indicator);
+
+		nextY += titleButton.height + 10;
+	}
+
 
 }
 }

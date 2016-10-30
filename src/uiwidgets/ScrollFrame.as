@@ -42,7 +42,6 @@ public class ScrollFrame extends Sprite implements DragClient {
 
 	public var contents:ScrollFrameContents;
 	public var allowHorizontalScrollbar:Boolean = true;
-	public var allowVerticalScrollbar:Boolean = true;
 
 	private const decayFactor:Number = 0.95;	// velocity decay (make zero to stop instantly)
 	private const stopThreshold:Number = 0.4;	// stop when velocity is below threshold
@@ -174,7 +173,7 @@ public class ScrollFrame extends Sprite implements DragClient {
 		shouldShow = (visibleW() < contents.width) && allowHorizontalScrollbar;
 		doesShow = hScrollbar != null;
 		if (shouldShow != doesShow) showHScrollbar(shouldShow);
-		shouldShow = (visibleH() < contents.height) && allowVerticalScrollbar;
+		shouldShow = visibleH() < contents.height;
 		doesShow = vScrollbar != null;
 		if (shouldShow != doesShow) showVScrollbar(shouldShow);
 		updateScrollbars();

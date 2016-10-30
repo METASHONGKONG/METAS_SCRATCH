@@ -44,12 +44,12 @@ public class MediaLibrary extends Sprite {
 		'All', 'Hardware'];
 	private static const soundCategories:Array = [
 		'All', 'Animal', 'Effects', 'Electronic', 'Human', 'Instruments',
-		'Music Loops', 'Musical Notes', 'Percussion', 'Vocals'];
+		'Music Loops', 'Percussion', 'Vocals'];
 
 	private static const backdropThemes:Array = [
 		'Castle', 'City', 'Flying', 'Holiday', 'Music and Dance', 'Nature', 'Space', 'Sports', 'Underwater'];
 	private static const costumeThemes:Array = [
-		'Castle', 'City', 'Dance', 'Dress-Up', 'Flying', 'Holiday', 'Music', 'Space', 'Sports', 'Underwater', 'Walking'];
+		'Castle', 'City', 'Flying', 'Holiday', 'Music and Dance', 'Space', 'Sports', 'Underwater', 'Walking'];
 
 	private static const imageTypes:Array = ['All', 'Bitmap', 'Vector'];
 
@@ -328,14 +328,12 @@ spriteFeaturesFilter.visible = false; // disable features filter for now
 	protected function addScratchExtensions():void {
 		const extList:Array = [
 			ScratchExtension.PicoBoard(),
-			ScratchExtension.WeDo(),
-			ScratchExtension.WeDo2()
-		];
+			ScratchExtension.WeDo()];
 		allItems = [];
 		for each (var ext:ScratchExtension in extList) {
 			allItems.push(new MediaLibraryItem({
 				extension: ext,
-				name: ext.displayName,
+				name: ext.name,
 				md5: ext.thumbnailMD5,
 				tags: ext.tags
 			}));
@@ -443,17 +441,9 @@ spriteFeaturesFilter.visible = false; // disable features filter for now
 					io.fetchImage(md5AndExt, item.dbObj.name, 0, whenDone, obj);
 				} else { // assetType == backdrop
 					if (item.dbObj.info.length == 3) {
-						obj = {
-							centerX: ScratchCostume.kCalculateCenter,
-							centerY: ScratchCostume.kCalculateCenter,
-							bitmapResolution: item.dbObj.info[2]
-						};
+						obj = {centerX: 99999, centerY: 99999, bitmapResolution: item.dbObj.info[2]};
 					} else if (item.dbObj.info.length == 2 && item.dbObj.info[0] == 960 && item.dbObj.info[1] == 720) {
-						obj = {
-							centerX: ScratchCostume.kCalculateCenter,
-							centerY: ScratchCostume.kCalculateCenter,
-							bitmapResolution: 2
-						};
+						obj = {centerX: 99999, centerY: 99999, bitmapResolution: 2};
 					}
 					io.fetchImage(md5AndExt, item.dbObj.name, 0, whenDone, obj);
 				}
@@ -700,22 +690,15 @@ spriteFeaturesFilter.visible = false; // disable features filter for now
 		} else { // try to read data as an MP3 file
 			if (app.lp) app.lp.setTitle('Converting mp3 file...');
 			var sound:Sound;
-			function uploadConvertedSound(out:ScratchSound):void {
-				snd = out;
-				if (snd && snd.sampleCount > 0) {
-					startSoundUpload(out, origName, uploadComplete);
-				}
-				else {
-					app.removeLoadProgressBox();
-					DialogBox.notify('Error decoding sound', 'Sorry, Scratch was unable to load the sound ' + sndName + '.', Scratch.app.stage);
-				}
-			}
 			SCRATCH::allow3d {
 				sound = new Sound();
 				try {
 					data.position = 0;
 					sound.loadCompressedDataFromByteArray(data, data.length);
-					MP3Loader.extractSamples(origName, sound, sound.length * 44.1, uploadConvertedSound);
+					MP3Loader.extractSamples(origName, sound, sound.length * 44.1, function (out:ScratchSound):void {
+						snd = out;
+						startSoundUpload(out, origName, uploadComplete);
+					});
 				}
 				catch(e:Error) {
 					trace(e);
@@ -725,7 +708,10 @@ spriteFeaturesFilter.visible = false; // disable features filter for now
 
 			if (!sound)
 				setTimeout(function():void {
-					MP3Loader.convertToScratchSound(sndName, data, uploadConvertedSound);
+					MP3Loader.convertToScratchSound(sndName, data, function(s:ScratchSound):void {
+						snd = s;
+						startSoundUpload(s, origName, uploadComplete);
+					});
 				}, 1);
 		}
 	}

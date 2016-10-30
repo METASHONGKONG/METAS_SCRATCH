@@ -56,19 +56,13 @@
 // Delay times are rounded to milliseconds, and the minimum delay is a millisecond.
 
 package interpreter {
-import blocks.*;
-
-import extensions.ExtensionManager;
-
-import flash.geom.Point;
-import flash.utils.Dictionary;
-import flash.utils.getTimer;
-
-import primitives.*;
-
-import scratch.*;
-
-import sound.*;
+	import flash.utils.Dictionary;
+	import flash.utils.getTimer;
+	import flash.geom.Point;
+	import blocks.*;
+	import primitives.*;
+	import scratch.*;
+	import sound.*;
 
 public class Interpreter {
 
@@ -120,7 +114,7 @@ public class Interpreter {
 
 	public function threadCount():int { return threads.length }
 
-	public function toggleThread(b:Block, targetObj:*, startupDelay:int = 0, isBackground:Boolean = false):void {
+	public function toggleThread(b:Block, targetObj:*, startupDelay:int = 0):void {
 		var i:int, newThreads:Array = [], wasRunning:Boolean = false;
 		for (i = 0; i < threads.length; i++) {
 			if ((threads[i].topBlock == b) && (threads[i].target == targetObj)) {
@@ -149,7 +143,7 @@ public class Interpreter {
 				};
 				b.args[0] = reporter;
 			}
-			if (app.editMode && ! isBackground) topBlock.showRunFeedback();
+			if (app.editMode) topBlock.showRunFeedback();
 			var t:Thread = new Thread(b, targetObj, startupDelay);
 			if (topBlock.isReporter) bubbleThread = t;
 			t.topBlock = topBlock;
@@ -305,7 +299,7 @@ public class Interpreter {
 		if (!b) return 0; // arg() and friends can pass null if arg index is out of range
 		var op:String = b.op;
 		if (b.opFunction == null) {
-			if (ExtensionManager.hasExtensionPrefix(op)) b.opFunction = app.extensionManager.primExtensionOp;
+			if (op.indexOf('.') > -1) b.opFunction = app.extensionManager.primExtensionOp;
 			else b.opFunction = (primTable[op] == undefined) ? primNoop : primTable[op];
 		}
 
@@ -334,7 +328,7 @@ public class Interpreter {
 					shouldYield = true;
 
 				// Don't start a request if the arguments for it are blocking
-				else if(barg.isRequester && barg.requestState < 2) {
+				else if((barg.isRequester || barg.isSetter) && barg.requestState < 2) {
 					if(barg.requestState == 0) evalCmd(barg);
 					shouldYield = true;
 				}

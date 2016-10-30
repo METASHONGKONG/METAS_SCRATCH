@@ -56,4 +56,15 @@ public class IndicatorLight extends Sprite {
 		g.endFill();
 	}
 
+
+	public function clone():IndicatorLight {
+		var indicator:IndicatorLight = new IndicatorLight();
+		indicator.target = this.target;
+		indicator.color = this.color;
+		indicator.msg = this.msg;
+		indicator.redraw();
+	
+		return indicator;
+	}
+
 }}

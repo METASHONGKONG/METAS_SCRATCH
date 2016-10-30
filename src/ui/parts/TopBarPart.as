@@ -34,6 +34,7 @@ import flash.text.*;
 import translation.Translator;
 
 import uiwidgets.*;
+import util.*;
 
 public class TopBarPart extends UIPart {
 
@@ -43,14 +44,18 @@ public class TopBarPart extends UIPart {
 
 	protected var fileMenu:IconButton;
 	protected var editMenu:IconButton;
+	protected var connectMenu:IconButton;
+	protected var boardMenu:IconButton;
+	protected var aboutMenu:IconButton;
 
 	private var copyTool:IconButton;
 	private var cutTool:IconButton;
 	private var growTool:IconButton;
 	private var shrinkTool:IconButton;
 	private var helpTool:IconButton;
-	private var toolButtons:Array = [];
 	private var toolOnMouseDown:String;
+
+	private var connectionStatus:TextField;
 
 	private var offlineNotice:TextField;
 	private const offlineNoticeFormat:TextFormat = new TextFormat(CSS.font, 13, CSS.white, true);
@@ -71,6 +76,7 @@ public class TopBarPart extends UIPart {
 		languageButton.isMomentary = true;
 		addTextButtons();
 		addToolButtons();
+		addConnectionStatus();
 		if (Scratch.app.isExtensionDevMode) {
 			addChild(logoButton = new IconButton(app.logoButtonPressed, Resources.createBmp('scratchxlogo')));
 			const desiredButtonHeight:Number = 20;
@@ -100,12 +106,17 @@ public class TopBarPart extends UIPart {
 		if (fileMenu.parent) {
 			removeChild(fileMenu);
 			removeChild(editMenu);
+			removeChild(connectMenu);
+			removeChild(boardMenu);
+			removeChild(aboutMenu);
 		}
 	}
 
 	public function updateTranslation():void {
 		removeTextButtons();
 		addTextButtons();
+		removeConnectionStatus();
+		addConnectionStatus();
 		if (offlineNotice) offlineNotice.text = Translator.map('Offline Editor');
 		refresh();
 	}
@@ -150,6 +161,18 @@ public class TopBarPart extends UIPart {
 		editMenu.y = buttonY;
 		nextX += editMenu.width + buttonSpace;
 
+		connectMenu.x = nextX;
+		connectMenu.y = buttonY;
+		nextX += connectMenu.width + buttonSpace;
+
+		boardMenu.x = nextX;
+		boardMenu.y = buttonY;
+		nextX += boardMenu.width + buttonSpace;
+
+		aboutMenu.x = nextX;
+		aboutMenu.y = buttonY;
+		nextX += aboutMenu.width + buttonSpace;
+
 		// cursor tool buttons
 		var space:int = 3;
 		copyTool.x = app.isOffline ? 493 : 427;
@@ -166,6 +189,10 @@ public class TopBarPart extends UIPart {
 
 		// From here down, nextX is the next item's right edge and decreases after each item
 		nextX = w - 5;
+
+		connectionStatus.x = nextX - connectionStatus.width;
+		connectionStatus.y = 5;
+		nextX = connectionStatus.x - 10;
 
 		if (loadExperimentalButton) {
 			loadExperimentalButton.x = nextX - loadExperimentalButton.width;
@@ -208,6 +235,9 @@ public class TopBarPart extends UIPart {
 	protected function addTextButtons():void {
 		addChild(fileMenu = makeMenuButton('File', app.showFileMenu, true));
 		addChild(editMenu = makeMenuButton('Edit', app.showEditMenu, true));
+		addChild(connectMenu = makeMenuButton('Connect', app.showConnectMenu, true));
+		addChild(boardMenu = makeMenuButton('Device', app.showDeviceMenu, true));
+		addChild(aboutMenu = makeMenuButton('About', app.showAboutDialog, false));
 	}
 
 	private function addToolButtons():void {
@@ -227,16 +257,12 @@ public class TopBarPart extends UIPart {
 			}
 		}
 
-		toolButtons.push(copyTool = makeToolButton('copyTool', selectTool));
-		toolButtons.push(cutTool = makeToolButton('cutTool', selectTool));
-		toolButtons.push(growTool = makeToolButton('growTool', selectTool));
-		toolButtons.push(shrinkTool = makeToolButton('shrinkTool', selectTool));
-		toolButtons.push(helpTool = makeToolButton('helpTool', selectTool));
-		if(!app.isMicroworld){
-			for each (var b:IconButton in toolButtons) {
-				addChild(b);
-			}
-		}
+		addChild(copyTool = makeToolButton('copyTool', selectTool));
+		addChild(cutTool = makeToolButton('cutTool', selectTool));
+		addChild(growTool = makeToolButton('growTool', selectTool));
+		addChild(shrinkTool = makeToolButton('shrinkTool', selectTool));
+		addChild(helpTool = makeToolButton('helpTool', selectTool));
+
 		SimpleTooltips.add(copyTool, {text: 'Duplicate', direction: 'bottom'});
 		SimpleTooltips.add(cutTool, {text: 'Delete', direction: 'bottom'});
 		SimpleTooltips.add(growTool, {text: 'Grow', direction: 'bottom'});
@@ -249,7 +275,7 @@ public class TopBarPart extends UIPart {
 	}
 
 	private function clearToolButtonsExcept(activeButton:IconButton):void {
-		for each (var b:IconButton in toolButtons) {
+		for each (var b:IconButton in [copyTool, cutTool, growTool, shrinkTool, helpTool]) {
 			if (b != activeButton) b.turnOff();
 		}
 	}
@@ -300,6 +326,37 @@ public class TopBarPart extends UIPart {
 		g.endFill();
 
 		return result;
+	}
+
+	private function removeConnectionStatus():void {
+		removeChild(connectionStatus);	
+	}
+
+	private function addConnectionStatus():void {
+		var status:Boolean = DeviceManager.instance().connected();
+		var statusLabel:String;
+		if (status) {
+			statusLabel = Translator.map('Connected');
+		}
+		else {
+			statusLabel = Translator.map('Not Connected');
+		}
+
+		connectionStatus = makeLabel(statusLabel, CSS.topBarButtonFormat, 2, 2);
+		connectionStatus.textColor = CSS.white;
+
+		addChild(connectionStatus);
+	}
+
+	public function setConnectionStatus(status:Boolean):void {
+		if (status) {
+			connectionStatus.text = Translator.map('Connected');
+		}
+		else {
+			connectionStatus.text = Translator.map('Not Connected');
+			connectionStatus.text = Translator.map('Not Connected');
+		}
+		fixLayout();
 	}
 }
 }

@@ -1,0 +1,34 @@
+{
+	"objName": "LED (PWM)",
+	"sounds": [{
+			"soundName": "pop",
+			"soundID": -1,
+			"md5": "83a9787d4cb6f3b7632b4ddfebf74367.wav",
+			"sampleCount": 258,
+			"rate": 11025,
+			"format": ""
+		}],
+	"costumes": [{
+			"costumeName": "LED",
+			"baseLayerID": -1,
+			"baseLayerMD5": "81845f4983f9bbcb806ea273637ed9f4.svg",
+			"bitmapResolution": 1,  
+			"rotationCenterX": 54,
+			"rotationCenterY": 54
+		}],
+	"currentCostumeIndex": 0,
+	"scratchX": 0,
+	"scratchY": 0,
+	"scale": 1,
+	"direction": 90,
+	"rotationStyle": "normal",
+	"isDraggable": false,
+	"indexInLibrary": 100000,
+	"visible": true,
+	"spriteInfo": {
+	},
+	"scripts": [[10, 105,
+		[["procDef", "Update LED %n", ["brightness"], [1], false],
+			["setPWMPin:to:", "port1", 9, ["getParam", "brightness", "r"]]]],
+		[10, 10, [["whenGreenFlag"], ["connectArduinoViaType:", "port1"], ["call", "Update LED %n", 255]]]]
+}

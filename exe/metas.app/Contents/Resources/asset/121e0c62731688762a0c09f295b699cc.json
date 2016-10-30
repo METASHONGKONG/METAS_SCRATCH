@@ -1,0 +1,36 @@
+{
+	"objName": "Potentiometer",
+	"sounds": [{
+			"soundName": "pop",
+			"soundID": -1,
+			"md5": "83a9787d4cb6f3b7632b4ddfebf74367.wav",
+			"sampleCount": 258,
+			"rate": 11025,
+			"format": ""
+		}],
+	"costumes": [{
+			"costumeName": "Potentiometer",
+			"baseLayerID": -1,
+			"baseLayerMD5": "121e0c62731688762a0c09f295b699cc.svg",
+			"bitmapResolution": 1,  
+			"rotationCenterX": 54,
+			"rotationCenterY": 54
+		}],
+	"currentCostumeIndex": 0,
+	"scratchX": 0,
+	"scratchY": 0,
+	"scale": 1,
+	"direction": 90,
+	"rotationStyle": "normal",
+	"isDraggable": false,
+	"indexInLibrary": 100000,
+	"visible": true,
+	"spriteInfo": {
+	},
+	"scripts":[[10, 10,
+			[["whenGreenFlag"],
+				["connectArduinoViaType:", "port1"],
+				["doForever", [["call", "Read Potentiometer"], ["wait:elapsed:from:", 0.5]]]]],
+		[10, 161,
+			[["procDef", "Read Potentiometer", [], [], false], ["setVar:to:", "Potentiometer", ["analogPin:", "port1", 0]]]]] 
+}

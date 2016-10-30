@@ -18,26 +18,17 @@
  */
 
 package scratch {
-import blocks.*;
-
-import extensions.ExtensionManager;
-
-import filters.*;
-
-import flash.display.*;
-import flash.events.*;
-import flash.geom.*;
-import flash.ui.*;
-
-import sound.*;
-
-import translation.Translator;
-
-import ui.ProcedureSpecEditor;
-
-import uiwidgets.*;
-
-import util.*;
+	import flash.display.*;
+	import flash.events.*;
+	import flash.geom.*;
+	import flash.ui.*;
+	import blocks.*;
+	import filters.*;
+	import sound.*;
+	import translation.Translator;
+	import ui.ProcedureSpecEditor;
+	import uiwidgets.*;
+	import util.*;
 
 public class BlockMenus implements DragClient {
 
@@ -65,7 +56,7 @@ public class BlockMenus implements DragClient {
 			if ((comparisonOps.indexOf(op)) > -1) { menuHandler.changeOpMenu(evt, comparisonOps); return; }
 			if (menuName == null) { menuHandler.genericBlockMenu(evt); return; }
 		}
-		if (ExtensionManager.hasExtensionPrefix(op) && menuHandler.extensionMenu(evt, menuName)) return;
+		if (op.indexOf('.') > -1 && menuHandler.extensionMenu(evt, menuName)) return;
 		if (menuName == 'attribute') menuHandler.attributeMenu(evt);
 		if (menuName == 'backdrop') menuHandler.backdropMenu(evt);
 		if (menuName == 'booleanSensor') menuHandler.booleanSensorMenu(evt);
@@ -89,11 +80,10 @@ public class BlockMenus implements DragClient {
 		if (menuName == 'scrollAlign') menuHandler.scrollAlignMenu(evt);
 		if (menuName == 'sensor') menuHandler.sensorMenu(evt);
 		if (menuName == 'sound') menuHandler.soundMenu(evt);
-		if (menuName == 'spriteOnly') menuHandler.spriteMenu(evt, false, false, false, true, false);
-		if (menuName == 'spriteOrMouse') menuHandler.spriteMenu(evt, true, false, false, false, false);
-		if (menuName == 'location') menuHandler.spriteMenu(evt, true, false, false, false, true);
-		if (menuName == 'spriteOrStage') menuHandler.spriteMenu(evt, false, false, true, false, false);
-		if (menuName == 'touching') menuHandler.spriteMenu(evt, true, true, false, false, false);
+		if (menuName == 'spriteOnly') menuHandler.spriteMenu(evt, false, false, false, true);
+		if (menuName == 'spriteOrMouse') menuHandler.spriteMenu(evt, true, false, false, false);
+		if (menuName == 'spriteOrStage') menuHandler.spriteMenu(evt, false, false, true, false);
+		if (menuName == 'touching') menuHandler.spriteMenu(evt, true, true, false, false);
 		if (menuName == 'stageOrThis') menuHandler.stageOrThisSpriteMenu(evt);
 		if (menuName == 'stop') menuHandler.stopMenu(evt);
 		if (menuName == 'timeAndDate') menuHandler.timeAndDateMenu(evt);
@@ -101,6 +91,23 @@ public class BlockMenus implements DragClient {
 		if (menuName == 'var') menuHandler.varMenu(evt);
 		if (menuName == 'videoMotionType') menuHandler.videoMotionTypeMenu(evt);
 		if (menuName == 'videoState') menuHandler.videoStateMenu(evt);
+		// Arduino
+		if (menuName == 'highLow') menuHandler.highLowMenu(evt);
+		if (menuName == 'digitalOutPin') menuHandler.digitalOutPinMenu(evt);
+		if (menuName == 'digitalInPin') menuHandler.digitalInPinMenu(evt);
+		if (menuName == 'pwmPin') menuHandler.pwmPinMenu(evt);
+		if (menuName == 'pwmValue') menuHandler.pwmValueMenu(evt);
+		if (menuName == 'analogPin') menuHandler.analogPinMenu(evt);
+		if (menuName == 'i2cAddress') menuHandler.i2cAddressMenu(evt);
+		if (menuName == 'onOff') menuHandler.onOffMenu(evt);
+		if (menuName == 'clockwise') menuHandler.clockwiseMenu(evt);
+		if (menuName == 'rgbValue') menuHandler.rgbValueMenu(evt);
+		if (menuName == 'servoPin') menuHandler.servoPinMenu(evt);
+		if (menuName == 'servoDegree') menuHandler.servoDegreeMenu(evt);
+		if (menuName == 'motorPin') menuHandler.motorPinMenu(evt);
+		// CloudServer
+		if (menuName == 'cities') menuHandler.citiesMenu(evt);
+		if (menuName == 'roads') menuHandler.roadsMenu(evt);
 	}
 
 	public static function strings():Array {
@@ -131,11 +138,10 @@ public class BlockMenus implements DragClient {
 //			handler.scrollAlignMenu(evt);
 			handler.sensorMenu(evt);
 			handler.soundMenu(evt);
-			handler.spriteMenu(evt, false, false, false, true, false);
-			handler.spriteMenu(evt, true, false, false, false, false);
-			handler.spriteMenu(evt, true, false, false, false, true);
-			handler.spriteMenu(evt, false, false, true, false, false);
-			handler.spriteMenu(evt, true, true, false, false, false);
+			handler.spriteMenu(evt, false, false, false, true);
+			handler.spriteMenu(evt, true, false, false, false);
+			handler.spriteMenu(evt, false, false, true, false);
+			handler.spriteMenu(evt, true, true, false, false);
 			handler.stageOrThisSpriteMenu(evt);
 			handler.stopMenu(evt);
 			handler.timeAndDateMenu(evt);
@@ -143,9 +149,26 @@ public class BlockMenus implements DragClient {
 			handler.varMenu(evt);
 			handler.videoMotionTypeMenu(evt);
 			handler.videoStateMenu(evt);
+			// Arduino
+			handler.highLowMenu(evt);
+			handler.digitalOutPinMenu(evt);
+			handler.digitalInPinMenu(evt);
+			handler.pwmPinMenu(evt);
+			handler.pwmValueMenu(evt);
+			handler.analogPinMenu(evt);
+			handler.i2cAddressMenu(evt);
+			handler.onOffMenu(evt);
+			handler.clockwiseMenu(evt);
+			handler.rgbValueMenu(evt);
+			handler.servoPinMenu(evt);
+			handler.servoDegreeMenu(evt);
+			handler.motorPinMenu(evt);
+			// Cloud Server
+			handler.citiesMenu(evt);
+			handler.roadsMenu(evt);
 		}
 		return [
-			'up arrow', 'down arrow', 'right arrow', 'left arrow', 'space', 'any',
+			'up arrow', 'down arrow', 'right arrow', 'left arrow', 'space',
 			'other scripts in sprite', 'other scripts in stage',
 			'backdrop #', 'backdrop name', 'volume', 'OK', 'Cancel',
 			'Edit Block', 'Rename' , 'New name', 'Delete', 'Broadcast', 'New Message', 'Message Name',
@@ -187,7 +210,6 @@ public class BlockMenus implements DragClient {
 		case 'sprite':
 		case 'spriteOnly':
 		case 'spriteOrMouse':
-		case 'location':
 		case 'spriteOrStage':
 		case 'touching':
 			return false; // handled directly by menu code
@@ -216,13 +238,10 @@ public class BlockMenus implements DragClient {
 	}
 
 	private function attributeMenu(evt:MouseEvent):void {
-		// If all else fails, fall back to the stage menus (better than nothing?)
-		var obj:* = app.stagePane;
-		if (block) {
-			var targetArg:BlockArg = block.getNormalizedArg(1) as BlockArg;
-			if (targetArg) {
-				obj = app.stagePane.objNamed(targetArg.argValue);
-			}
+		var obj:*;
+		if (block && block.args[1]) {
+			if (block.args[1] is BlockArg) obj = app.stagePane.objNamed(block.args[1].argValue);
+			else obj = app.stagePane;  // this gives it the stage menus, but it's better than nothing
 		}
 		var attributes:Array = obj is ScratchStage ? stageAttributes : spriteAttributes;
 		var m:Menu = new Menu(setBlockArg, 'attribute');
@@ -347,12 +366,7 @@ public class BlockMenus implements DragClient {
 	}
 
 	private function notePicker(evt:MouseEvent):void {
-		function pianoCallback(note:int):void{
-			setBlockArg(note);
-			block.demo();
-
-		}
-		var piano:Piano = new Piano(block.base.color, app.viewedObj().instrument, pianoCallback);
+		var piano:Piano = new Piano(block.base.color, app.viewedObj().instrument, setBlockArg);
 		if (!isNaN(blockArg.argValue)) {
 			piano.selectNote(int(blockArg.argValue));
 		}
@@ -404,22 +418,20 @@ public class BlockMenus implements DragClient {
 		app.soundsPart.recordSound();
 	}
 
-	private function spriteMenu(evt:MouseEvent, includeMouse:Boolean, includeEdge:Boolean, includeStage:Boolean, includeSelf:Boolean, includeRandom:Boolean):void {
+	private function spriteMenu(evt:MouseEvent, includeMouse:Boolean, includeEdge:Boolean, includeStage:Boolean, includeSelf:Boolean):void {
 		function setSpriteArg(s:*):void {
 			if (blockArg == null) return;
 			if (s == 'edge') blockArg.setArgValue('_edge_', Translator.map('edge'));
 			else if (s == 'mouse-pointer') blockArg.setArgValue('_mouse_', Translator.map('mouse-pointer'));
 			else if (s == 'myself') blockArg.setArgValue('_myself_', Translator.map('myself'));
 			else if (s == 'Stage') blockArg.setArgValue('_stage_', Translator.map('Stage'));
-			else if (s == 'random position') blockArg.setArgValue('_random_', Translator.map('random position'));
 			else blockArg.setArgValue(s);
 			if (block.op == 'getAttribute:of:') {
 				var obj:ScratchObj = app.stagePane.objNamed(s);
-				var attribArg:BlockArg = block.getNormalizedArg(0);
-				var attr:String = attribArg.argValue;
+				var attr:String = block.args[0].argValue;
 				var validAttrs:Array = obj && obj.isStage ? stageAttributes : spriteAttributes;
 				if (validAttrs.indexOf(attr) == -1 && !obj.ownsVar(attr)) {
-					attribArg.setArgValue(validAttrs[0]);
+					block.args[0].setArgValue(validAttrs[0]);
 				}
 			}
 			Scratch.app.setSaveNeeded();
@@ -427,11 +439,10 @@ public class BlockMenus implements DragClient {
 		var spriteNames:Array = [];
 		var m:Menu = new Menu(setSpriteArg, 'sprite');
 		if (includeMouse) m.addItem(Translator.map('mouse-pointer'), 'mouse-pointer');
-		if (includeRandom) m.addItem(Translator.map('random position'), 'random position');
 		if (includeEdge) m.addItem(Translator.map('edge'), 'edge');
 		m.addLine();
 		if (includeStage) {
-			m.addItem(Translator.map('Stage'), 'Stage');
+			m.addItem(app.stagePane.objName, 'Stage');
 			m.addLine();
 		}
 		if (includeSelf && !app.viewedObj().isStage) {
@@ -803,6 +814,8 @@ public class BlockMenus implements DragClient {
 			else setBlockArg(selection);
 		}
 		var msgNames:Array = app.runtime.collectBroadcasts();
+		if (msgNames.indexOf('message1') <= -1) msgNames.push('message1');
+		msgNames.sort();
 
 		var m:Menu = new Menu(broadcastMenuSelection, 'broadcast');
 		for each (var msg:String in msgNames) m.addItem(msg);
@@ -849,5 +862,159 @@ public class BlockMenus implements DragClient {
 		}
 		showMenu(m);
 	}
+
+	// Arduino
+	private function i2cAddressMenu(evt:MouseEvent):void {
+		function i2cAddressMenuSelection(selection:*):void {
+			if (selection is Function) selection();
+			else setBlockArg(selection);
+		}
+
+		var addresses:Array = app.runtime.collectAddresses();
+		if (addresses.indexOf('address1') <= -1) addresses.push('address1');
+		addresses.sort();
+
+		var m:Menu = new Menu(i2cAddressMenuSelection, 'i2cAddress');
+		for each (var address:String in addresses) m.addItem(address);
+		m.addLine();
+		m.addItem('new address...', newAddress);
+		showMenu(m);
+	}
+
+	private function isNumber(value:String):Boolean {
+		var n:Number = Number(value);
+		return (!isNaN(n));
+	}
+
+	private function newAddress():void {
+		function changeAddress(dialog:DialogBox):void {
+			var newAddressName:String = dialog.getField('Address');
+			if (newAddressName.length == 0) return;
+
+			if (!(isNumber(newAddressName))) {
+				DialogBox.notify("Cannot Add", "Address is not in dec or hex");
+				return;
+			}
+			setBlockArg(newAddressName);
+		}
+
+		var d:DialogBox = new DialogBox(changeAddress);
+		d.addTitle('New Address');
+		d.addField('Address', 120);
+		d.addText('* must be in decimal (eg 72) or hex (eg 0x48)');
+		d.addAcceptCancelButtons('OK');
+		d.showOnStage(app.stage);
+	}
+
+	private function highLowMenu(evt:MouseEvent):void {
+		const highLow:Array = ['high', 'low'];
+		var m:Menu = new Menu(setBlockArg, 'highLow');
+		for each (var s:String in highLow) m.addItem(s);
+		showMenu(m);		
+	}
+
+	private function digitalOutPinMenu(evt:MouseEvent):void {
+		// var digitalPin:Array = [5, 8, 9, 10];
+		var selectedBoard:String = BoardSelector.instance().getSelectedBoard();
+		var digitalPin:Array = BoardSelector.instance().getDigitalOutPins(selectedBoard);
+		var m:Menu = new Menu(setBlockArg, 'digitalOutPin');
+		for each (var i:int in digitalPin) m.addItem(i);
+		showMenu(m);
+	}
+
+	private function digitalInPinMenu(evt:MouseEvent):void {
+		// var digitalPin:Array = [2];
+		var selectedBoard:String = BoardSelector.instance().getSelectedBoard();
+		var digitalPin:Array = BoardSelector.instance().getDigitalInPins(selectedBoard);
+		var m:Menu = new Menu(setBlockArg, 'digitalInPin');
+		for each (var i:int in digitalPin) m.addItem(i);
+		showMenu(m);
+	}
+
+	private function pwmPinMenu(evt:MouseEvent):void {
+		// var pwmPin:Array = [5, 9];
+		var selectedBoard:String = BoardSelector.instance().getSelectedBoard();
+		var pwmPin:Array = BoardSelector.instance().getPWMPins(selectedBoard);
+		var m:Menu = new Menu(setBlockArg, 'pwmPin');
+		for each (var i:int in pwmPin) m.addItem(i);
+		showMenu(m);
+	}
+
+	private function pwmValueMenu(evt:MouseEvent):void {
+		var pwmValue:Array = [0, 25, 50, 75, 100];
+		var m:Menu = new Menu(setBlockArg, 'pwmValue');
+		for each (var i:int in pwmValue) m.addItem(i);
+		showMenu(m);
+	}
+
+	private function analogPinMenu(evt:MouseEvent):void {
+		// var analogPin:Array = [0, 1, 2];
+		var selectedBoard:String = BoardSelector.instance().getSelectedBoard();
+		var analogPin:Array = BoardSelector.instance().getAnalogPins(selectedBoard);
+		var m:Menu = new Menu(setBlockArg, 'analogPin');
+		for each (var i:int in analogPin) m.addItem(i);
+		showMenu(m);
+	}
+
+	private function onOffMenu(evt:MouseEvent):void {
+		const onOff:Array = ['on', 'off'];
+		var m:Menu = new Menu(setBlockArg, 'onOff');
+		for each (var s:String in onOff) m.addItem(s);
+		showMenu(m);		
+	}
+
+	private function clockwiseMenu(evt:MouseEvent):void {
+		const clockwise:Array = ['clockwise', 'counterclockwise'];
+		var m:Menu = new Menu(setBlockArg, 'clockwise');
+		for each (var s:String in clockwise) m.addItem(s);
+		showMenu(m);		
+	}
+
+	private function rgbValueMenu(evt:MouseEvent):void {
+		var rgbValue:Array = [0, 50, 100, 175, 255];
+		var m:Menu = new Menu(setBlockArg, 'rgbValue');
+		for each (var i:int in rgbValue) m.addItem(i);
+		showMenu(m);
+	}
+
+	private function motorPinMenu(evt:MouseEvent):void {
+		var motorPin:Array = [3, 5];
+		var m:Menu = new Menu(setBlockArg, 'motorPin');
+		for each (var i:int in motorPin) m.addItem(i);
+		showMenu(m);
+	}
+
+	private function servoPinMenu(evt:MouseEvent):void {
+		var selectedBoard:String = BoardSelector.instance().getSelectedBoard();
+		var servoPin:Array = BoardSelector.instance().getServoPins(selectedBoard);
+		var m:Menu = new Menu(setBlockArg, 'servoPin');
+		for each (var i:int in servoPin) m.addItem(i);
+		showMenu(m);
+	}
+
+	private function servoDegreeMenu(evt:MouseEvent):void {
+		var servoDegree:Array = [0, 45, 90, 135, 180];
+		var m:Menu = new Menu(setBlockArg, 'servoDegree');
+		for each (var i:int in servoDegree) m.addItem(i);
+		showMenu(m);
+	}
+
+	private function citiesMenu(evt:MouseEvent):void {
+		// var citiesNames:Array = ['King\'s Park', 'Wong Chuk Hang', 'Ta Kwu Ling', 'Lau Fau Shan', 'Tai Po', 'Sha Tin', 'Tuen Mun', 'Tseung Kwan O'];
+		var citiesNames:Array = app.cloudServer.getHongKongWeatherManager().getLocations();
+		var m:Menu = new Menu(setBlockArg, 'cities');
+		for each (var cities:String in citiesNames) m.addItem(cities);
+		showMenu(m);
+	}
+
+	private function roadsMenu(evt:MouseEvent):void {
+		//var roadsNames:Array = ['Gloucester Road', 'Island Eastern Corridor', 'Ferry Street', 'Waterloo Road', 'Princess Margaret Road'];
+		var roadsNames:Array = app.cloudServer.getHongKongTrafficManager().getRoads();
+		var m:Menu = new Menu(setBlockArg, 'roads');
+		for each (var road:String in roadsNames) m.addItem(road);
+		showMenu(m);
+	}
+
+
 
 }}

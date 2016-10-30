@@ -1,0 +1,36 @@
+{
+	"objName": "Sound Sensor",
+	"sounds": [{
+			"soundName": "pop",
+			"soundID": -1,
+			"md5": "83a9787d4cb6f3b7632b4ddfebf74367.wav",
+			"sampleCount": 258,
+			"rate": 11025,
+			"format": ""
+		}],
+	"costumes": [{
+			"costumeName": "Sound Sensor",
+			"baseLayerID": -1,
+			"baseLayerMD5": "50a1ae6ebd5ea396406d76446e9c0028.png",
+			"bitmapResolution": 1,  
+			"rotationCenterX": 54,
+			"rotationCenterY": 54
+		}],
+	"currentCostumeIndex": 0,
+	"scratchX": 0,
+	"scratchY": 0,
+	"scale": 1.0,
+	"direction": 90,
+	"rotationStyle": "normal",
+	"isDraggable": false,
+	"indexInLibrary": 100000,
+	"visible": true,
+	"spriteInfo": {
+	},
+	"scripts":[[10, 10,
+		[["whenGreenFlag"],
+			["connectArduinoViaType:", "port1"],
+				["doForever", [["call", "Read Sound Level"], ["wait:elapsed:from:", 0.5]]]]],
+		[10, 161,
+			[["procDef", "Read Sound Level", [], [], false], ["setVar:to:", "Sound Level", ["analogPin:", "port1", 5]]]]] 
+}

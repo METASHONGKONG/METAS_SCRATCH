@@ -1,0 +1,38 @@
+{
+	"objName": "LED",
+	"sounds": [{
+			"soundName": "pop",
+			"soundID": -1,
+			"md5": "83a9787d4cb6f3b7632b4ddfebf74367.wav",
+			"sampleCount": 258,
+			"rate": 11025,
+			"format": ""
+		}],
+	"costumes": [{
+			"costumeName": "LED",
+			"baseLayerID": -1,
+			"baseLayerMD5": "e83ae480c77e8ca446c0b8b19f153029.png",
+			"bitmapResolution": 2,
+			"rotationCenterX": 181,
+			"rotationCenterY": 180
+		}],
+	"currentCostumeIndex": 0,
+	"scratchX": 0,
+	"scratchY": 0,
+	"scale": 0.5,
+	"direction": 90,
+	"rotationStyle": "normal",
+	"isDraggable": false,
+	"indexInLibrary": 100000,
+	"visible": true,
+	"spriteInfo": {
+	},
+	"scripts": [[10,
+		10,
+		[["whenGreenFlag"], ["connectArduinoViaType:", "connection1"]]],
+			[10, 83, [["whenConnectionConnected", "connection1"], ["call", "LED On"]]],
+		[10, 149,
+			[["procDef", "LED On", [], [], false], ["set:DigitalPin:to:", "connection1", 13, "high"]]],
+		[10, 233,
+			[["procDef", "LED Off", [], [], false], ["set:DigitalPin:to:", "connection1", 13, "low"]]]]
+}

@@ -1,0 +1,30 @@
+{
+	"objName": "Guitar Bass",
+	"sounds": [{
+			"soundName": "guitar chords2",
+			"soundID": -1,
+			"md5": "e956f15da397a13fae0c90d9fe4571fb.wav",
+			"sampleCount": 158976,
+			"rate": 22050,
+			"format": "adpcm"
+		}],
+	"costumes": [{
+			"costumeName": "guitar bass",
+			"baseLayerID": -1,
+			"baseLayerMD5": "9db1d9c63f8f868f660a9b2b243c747a.svg",
+			"bitmapResolution": 1,
+			"rotationCenterX": 43,
+			"rotationCenterY": 131
+		}],
+	"currentCostumeIndex": 0,
+	"scratchX": 0,
+	"scratchY": 0,
+	"scale": 1,
+	"direction": 90,
+	"rotationStyle": "normal",
+	"isDraggable": false,
+	"indexInLibrary": 100000,
+	"visible": true,
+	"spriteInfo": {
+	}
+}

@@ -1,0 +1,12 @@
+<application xmlns="http://ns.adobe.com/air/application/20.0">
+	<id>com.coding101.Scratch</id>
+	<versionNumber>1.0</versionNumber>
+	<filename>Metas Scratch - based on MIT Scratch</filename>
+	<initialWindow>
+		<content>Scratch.swf</content>
+		<visible>true</visible>
+		<width>1200</width>
+		<height>900</height>
+	</initialWindow>
+</application>
+

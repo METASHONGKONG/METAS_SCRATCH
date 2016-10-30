@@ -21,46 +21,33 @@
 // John Maloney, September 2010
 
 package scratch {
-import assets.Resources;
-
-import blocks.Block;
-import blocks.BlockArg;
-
-import extensions.ExtensionManager;
-
 import flash.display.*;
 import flash.events.*;
-import flash.geom.Matrix;
-import flash.geom.Point;
 import flash.geom.Rectangle;
+import flash.geom.Point;
+import flash.geom.Matrix;
 import flash.media.*;
 import flash.net.*;
 import flash.system.System;
 import flash.text.TextField;
 import flash.utils.*;
-
+import blocks.Block;
+import blocks.BlockArg;
 import interpreter.*;
-
-import leelib.util.flvEncoder.*;
-
-import logging.LogLevel;
-
 import primitives.VideoMotionPrims;
-
 import sound.ScratchSoundPlayer;
-
 import translation.*;
-
+import assets.Resources;
+import ui.media.MediaInfo;
 import ui.BlockPalette;
+import uiwidgets.DialogBox;
 import ui.RecordingSpecEditor;
 import ui.SharingSpecEditor;
-import ui.media.MediaInfo;
-
-import uiwidgets.DialogBox;
-
 import util.*;
-
 import watchers.*;
+import logging.LogLevel;
+import scratch.ReadyLabel;
+import leelib.util.flvEncoder.*;
 
 public class ScratchRuntime {
 
@@ -163,6 +150,8 @@ public class ScratchRuntime {
 		}
 		app.extensionManager.step();
 		if (motionDetector) motionDetector.step(); // Video motion detection
+
+		if (app.pollObjectManager) app.pollObjectManager.step(); // Step the polling objects
 
 		// Step the stage, sprites, and watchers
 		app.stagePane.step(this);
@@ -518,6 +507,7 @@ public class ScratchRuntime {
 		clearKeyDownArray();
 		ScratchSoundPlayer.stopAllSounds();
 		app.extensionManager.stopButtonPressed();
+		DeviceManager.instance().resetCurrentDevice(); // send a reset instruction when stop button 
 		app.stagePane.clearFilters();
 		for each (var s:ScratchSprite in app.stagePane.sprites()) {
 			s.clearFilters();
@@ -578,7 +568,6 @@ public class ScratchRuntime {
 		allStacksAndOwnersDo(startMatchingKeyHats);
 	}
 
-	// Returns a sorted array of all messages in use, or a single-element array containing the default message name.
 	public function collectBroadcasts():Array {
 		function addBlock(b:Block):void {
 			if ((b.op == 'broadcast:') ||
@@ -599,11 +588,8 @@ public class ScratchRuntime {
 			var b:Block = palette.getChildAt(i) as Block;
 			if (b) addBlock(b);
 		}
-		if (result.length > 0) {
-			result.sort();
-			return result;
-		}
-		return [Translator.map('message1')];
+		result.sort();
+		return result;
 	}
 
 	public function hasUnofficialExtensions():Boolean {
@@ -620,8 +606,10 @@ public class ScratchRuntime {
 	}
 
 	private function isUnofficialExtensionBlock(b:Block):Boolean {
-		var extName:String = ExtensionManager.unpackExtensionName(b.op);
-		return extName && !app.extensionManager.isInternal(extName);
+		var i:int = b.op.indexOf('.');
+		if(i == -1) return false;
+		var extName:String = b.op.substr(0, i);
+		return !app.extensionManager.isInternal(extName);
 	}
 
 	SCRATCH::allow3d
@@ -654,7 +642,6 @@ public class ScratchRuntime {
 
 	// hats whose triggering condition is currently true
 	protected var activeHats:Array = [];
-	protected var waitingHats:Array = []
 	protected function startEdgeTriggeredHats(hat:Block, target:ScratchObj):void {
 		if (!hat.isHat || !hat.nextBlock) return; // skip disconnected hats
 
@@ -679,63 +666,33 @@ public class ScratchRuntime {
 				activeHats.push(hat);
 			}
 		} else if (app.jsEnabled) {
-			var unpackedOp:Array = ExtensionManager.unpackExtensionAndOp(hat.op);
-			var extName:String = unpackedOp[0];
-			if (extName && app.extensionManager.extensionActive(extName)) {
-				var op:String = unpackedOp[1];
-				var numArgs:uint = hat.args.length;
-				var finalArgs:Array = new Array(numArgs);
-				for (var i:uint = 0; i < numArgs; ++i)
-					finalArgs[i] = interp.arg(hat, i);
+			var dotIndex:int = hat.op.indexOf('.');
+			if (dotIndex > -1) {
+				var extName:String = hat.op.substr(0, dotIndex);
+				if (app.extensionManager.extensionActive(extName)) {
+					var op:String = hat.op.substr(dotIndex+1);
+					var args:Array = hat.args;
+					var finalArgs:Array = new Array(args.length);
+					for (var i:uint=0; i<args.length; ++i)
+						finalArgs[i] = interp.arg(hat, i);
 
-				processExtensionReporter(hat, target, extName, op, finalArgs);
+					processExtensionReporter(hat, target, extName, op, finalArgs);
+				}
 			}
 		}
 	}
 
 	private function processExtensionReporter(hat:Block, target:ScratchObj, extName:String, op:String, finalArgs:Array):void {
 		// TODO: Is it safe to do this in a callback, or must it happen before we return from startEdgeTriggeredHats?
-		function triggerHatBlock(triggerCondition:Boolean):void {
+		app.externalCall('ScratchExtensions.getReporter', function(triggerCondition:Boolean):void {
 			if (triggerCondition) {
 				if (triggeredHats.indexOf(hat) == -1) { // not already trigged
 					// only start the stack if it is not already running
-
 					if (!interp.isRunning(hat, target)) interp.toggleThread(hat, target);
 				}
 				activeHats.push(hat);
 			}
-		}
-		if(!hat.isAsyncHat){
-			app.externalCall('ScratchExtensions.getReporter', triggerHatBlock, extName, op, finalArgs);
-		}
-		else{
-			//Tell the block to wait like a reporter, fire if true
-			if(hat.requestState == 0){
-				if(!interp.isRunning(hat, target)){
-					interp.toggleThread(hat, target, 0, true);
-				}
-			}
-			if(triggeredHats.indexOf(hat) >= 0){
-				activeHats.push(hat);
-			}
-		}
-	}
-
-	public function waitingHatFired(hat:Block, willExec:Boolean):Boolean{
-		if(willExec){
-			if(activeHats.indexOf(hat) < 0){
-				hat.showRunFeedback();
-				if(hat.forceAsync){
-					activeHats.push(hat);
-				}
-				return true;
-			}
-		}
-		else{
-			activeHats.splice(activeHats.indexOf(hat), 1);
-			triggeredHats.splice(triggeredHats.indexOf(hat), 1);
-		}
-		return false;
+		}, extName, op, finalArgs);
 	}
 
 	private function processEdgeTriggeredHats():void {
@@ -775,6 +732,15 @@ public class ScratchRuntime {
 
 	public function installNewProject():void {
 		installEmptyProject();
+
+		function whenDone(spr:ScratchSprite):void {
+			app.addNewSprite(spr);
+			spr.setScratchXY(0, 0); // Put it back to the center
+			app.saveNeeded = false;  // Make it saveNeeded to false when it's first loaded
+		}
+
+		var io:ProjectIO = new ProjectIO(app);
+		io.fetchSprite("2c5f426d46cfbefcfc4b4bce5145f7f9.json", whenDone); // dinosaur
 	}
 
 	public function selectProjectFile():void {
@@ -866,10 +832,9 @@ public class ScratchRuntime {
 			if (spr) spr.setDirection(spr.direction);
 		}
 
-		app.resetPlugin(function():void {
-			app.extensionManager.clearImportedExtensions();
-			app.extensionManager.loadSavedExtensions(project.info.savedExtensions);
-		});
+		app.resetPlugin();
+		app.extensionManager.clearImportedExtensions();
+		app.extensionManager.loadSavedExtensions(project.info.savedExtensions);
 		app.installStage(project);
 		app.updateSpriteLibrary(true);
 		// set the active sprite
@@ -1121,7 +1086,7 @@ public class ScratchRuntime {
 		var obj:ScratchObj = app.viewedObj();
 		var oldName:String = obj.objName;
 		obj.objName = '';
-		newName = app.stagePane.unusedSpriteName(newName || Translator.map('Sprite1'));
+		newName = app.stagePane.unusedSpriteName(newName || 'Sprite1');
 		obj.objName = newName;
 		for each (var lw:ListWatcher in app.viewedObj().lists) {
 			lw.updateTitle();
@@ -1259,7 +1224,7 @@ public class ScratchRuntime {
 	}
 
 	public function allUsesOfSprite(spriteName:String):Array {
-		var spriteMenus:Array = ["spriteOnly", "spriteOrMouse", "spriteOrStage", "touching", "location"];
+		var spriteMenus:Array = ["spriteOnly", "spriteOrMouse", "spriteOrStage", "touching"];
 		var result:Array = [];
 		for each (var stack:Block in allStacks()) {
 			// for each block in stack
@@ -1348,6 +1313,31 @@ public class ScratchRuntime {
 
 	public function clearAllCaches():void {
 		for each (var obj:ScratchObj in app.stagePane.allObjects()) obj.clearCaches();
+	}
+
+	// Collect the address for I2C read for Arduino
+	public function collectAddresses():Array {
+		function addBlock(b:Block):void {
+			if ((b.op == 'i2cConfig:address:bytes:') ||
+					(b.op == 'i2c:dataAvailable:') ||
+					(b.op == 'i2cRead:address:')) {
+				if (b.args[0] is BlockArg) {
+					var msg:String = b.args[0].argValue;
+					if (result.indexOf(msg) < 0) result.push(msg);
+				}
+			}
+		}
+		var result:Array = [];
+		allStacksAndOwnersDo(function (stack:Block, target:ScratchObj):void {
+			stack.allBlocksDo(addBlock);
+		});
+		var palette:BlockPalette = app.palette;
+		for (var i:int = 0; i < palette.numChildren; i++) {
+			var b:Block = palette.getChildAt(i) as Block;
+			if (b) addBlock(b);
+		}
+		result.sort();
+		return result;
 	}
 
 	// -----------------------------

@@ -124,7 +124,8 @@ public class ScriptsPart extends UIPart {
 				yReadout.text = String(lastY);
 			}
 		}
-		updateExtensionIndicators();
+		// Disable extension indicators
+		// updateExtensionIndicators();
 	}
 
 	private var lastUpdateTime:uint;

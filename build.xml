@@ -13,7 +13,7 @@
 	<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
 
 	<!-- General tasks -->
-	<target name="all" depends="clean,compile-10.2,compile-11.6"/>
+	<target name="all" depends="clean,compile-11.6"/>
 
 	<target name="clean">
 		<delete dir="${DEPLOY_DIR}" />
@@ -42,11 +42,12 @@
 	<!-- Build for Flash Player 11.6 -->
 	<target name="compile-11.6" depends="info">
 		<mxmlc file="${SRC_DIR}/Scratch.as" output="${DEPLOY_DIR}/Scratch.swf"
-		                target-player="11.6" swf-version="19" debug="false">
+		                target-player="11.6" swf-version="19" debug="true">
 			<source-path path-element="${SRC_DIR}" />
 			<library-path file="${LIBS_DIR}/as3corelib.swc" />
 			<library-path file="${LIBS_DIR}/blooddy_crypto.swc" />
 			<library-path file="${FLEX_HOME}/frameworks/libs/framework.swc" />
+			<library-path file="${AIR_HOME}/frameworks/libs/air/airglobal.swc" />
 			<static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
 			<default-size width="800" height="600" />
 			<define name="SCRATCH::allow3d" value="true" />

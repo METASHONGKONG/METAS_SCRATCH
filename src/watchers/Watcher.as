@@ -24,25 +24,19 @@
 // Represents a variable display.
 
 package watchers {
-import blocks.Block;
-
-import extensions.ExtensionManager;
+import blocks.BlockIO;
 
 import flash.display.*;
-import flash.events.MouseEvent;
-import flash.filters.BevelFilter;
-import flash.geom.Point;
-import flash.text.*;
-
-import interpreter.*;
-
-import scratch.*;
-
-import translation.Translator;
-
-import uiwidgets.*;
-
-import util.*;
+	import flash.filters.BevelFilter;
+	import flash.events.MouseEvent;
+	import flash.geom.Point;
+	import flash.text.*;
+	import interpreter.*;
+	import scratch.*;
+	import uiwidgets.*;
+	import util.*;
+	import blocks.Block;
+	import translation.Translator;
 
 public class Watcher extends Sprite implements DragClient {
 
@@ -189,10 +183,10 @@ public class Watcher extends Sprite implements DragClient {
 	}
 
 	private function specForCmd():String {
-		var extName:String = ExtensionManager.unpackExtensionName(cmd);
-		if (extName) {
+		var i:int = cmd.indexOf('.');
+		if(i > -1) {
 			var spec:Array = Scratch.app.extensionManager.specForCmd(cmd);
-			if (spec) return extName + ': ' + spec[0];
+			if(spec) return cmd.substr(0, i) + ': '+spec[0];
 		}
 
 		for each (var entry:Array in Specs.commands) {
@@ -244,9 +238,9 @@ public class Watcher extends Sprite implements DragClient {
 			case "yScroll": return app.stagePane.yScroll;
 		}
 
-		if(ExtensionManager.hasExtensionPrefix(cmd)) {
+		if(cmd.indexOf('.') > -1) {
 			var spec:Array = Scratch.app.extensionManager.specForCmd(cmd);
-			if (spec) {
+			if(spec) {
 				block = new Block(spec[0], spec[1], Specs.blockColor(spec[2]), spec[3]);
 				return Scratch.app.interp.evalCmd(block);
 			}

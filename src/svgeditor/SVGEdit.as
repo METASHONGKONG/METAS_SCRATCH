@@ -28,8 +28,7 @@ package svgeditor {
 	import scratch.ScratchCostume;
 
 	import svgeditor.*;
-import svgeditor.ColorPicker;
-import svgeditor.objs.*;
+	import svgeditor.objs.*;
 	import svgeditor.tools.*;
 
 	import svgutils.*;
@@ -183,7 +182,7 @@ import svgeditor.objs.*;
 			if(bSave) saveContent();
 		}
 
-		override protected function onDrawPropsChange(e:Event):void {
+		override protected function onColorChange(e:Event):void {
 			if(currentTool is SVGEditTool && (toolMode != 'select') && (toolMode != 'text')) {
 				var obj:ISVGEditable = (currentTool as SVGEditTool).getObject();
 				if(obj) {
@@ -195,10 +194,9 @@ import svgeditor.objs.*;
 				}
 			}
 			else {
-				super.onDrawPropsChange(e);
+				super.onColorChange(e);
 			}
 		}
-
 
 		override protected function stageKeyDownHandler(event:KeyboardEvent):Boolean {
 			if(!super.stageKeyDownHandler(event)) {
@@ -405,7 +403,7 @@ import svgeditor.objs.*;
 			importer.loadAllImages(imagesLoaded);
 		}
 
-		public override function saveContent(E:Event = null, undoable:Boolean=true):void {
+		public override function saveContent(E:Event = null):void {
 			var contentLayer:Sprite = workArea.getContentLayer();
 			var svgData:ByteArray;
 

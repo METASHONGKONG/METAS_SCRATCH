@@ -1,0 +1,36 @@
+{
+	"objName": "Button",
+	"sounds": [{
+			"soundName": "pop",
+			"soundID": -1,
+			"md5": "83a9787d4cb6f3b7632b4ddfebf74367.wav",
+			"sampleCount": 258,
+			"rate": 11025,
+			"format": ""
+		}],
+	"costumes": [{
+			"costumeName": "Button",
+			"baseLayerID": -1,
+			"baseLayerMD5": "35a6a4181c2fe1f052716cfed8d352ec.png",
+			"bitmapResolution": 1,  
+			"rotationCenterX": 54,
+			"rotationCenterY": 54
+		}],
+	"currentCostumeIndex": 0,
+	"scratchX": 0,
+	"scratchY": 0,
+	"scale": 0.5,
+	"direction": 90,
+	"rotationStyle": "normal",
+	"isDraggable": false,
+	"indexInLibrary": 100000,
+	"visible": true,
+	"spriteInfo": {
+	},
+	"scripts":[[10, 10,
+			[["whenGreenFlag"],
+				["connectArduinoViaType:", "port1"],
+				["doForever", [["call", "Read Button"], ["wait:elapsed:from:", 0.5]]]]],
+		[10, 161,
+			[["procDef", "Read Button", [], [], false], ["setVar:to:", "Button", ["digitalPin:", "port1", 7]]]]] 
+}

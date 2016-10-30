@@ -47,12 +47,29 @@ public class Specs {
 	public static const dataCategory:int = 9;
 	public static const myBlocksCategory:int = 10;
 	public static const listCategory:int = 12;
+	public static const metasCategory:int = 13;
+	public static const metasOutputDigitalCategory:int = 14;
+	public static const metasOutputAnalogCategory:int = 15;
+	public static const metasInputDigitalCategory:int = 16;
+	public static const metasInputAnalogCategory:int = 17;
+	public static const cloudServerCategory:int = 18;
+	public static const arduinoCategory:int = 19;
+	public static const metasComboCategory:int = 21;
+	public static const metasInputDigital8266Category:int = 22;
+
 	public static const extensionsCategory:int = 20;
 
 	public static var variableColor:int = 0xEE7D16; // Scratch 1.4: 0xF3761D
 	public static var listColor:int = 0xCC5B22; // Scratch 1.4: 0xD94D11
 	public static var procedureColor:int = 0x632D99; // 0x531E99;
 	public static var parameterColor:int = 0x5947B1;
+	public static var metasColor:int = 0xFFDE00; // 0xF80012; // 0x04b4ae; // 0x4a6cd4; // 0xFFFF00;
+	public static var metasOutputDigitalColor:int = 0x58D40B;
+	public static var metasOutputAnalogColor:int = 0x04B404;  // 0xF80012; // 0x04b4ae; // 0x4a6cd4;
+	public static var metasInputDigitalColor:int = 0xF056C7; // 0xF80012; // 0x04b4ae; // 0x4a6cd4;
+	public static var metasInputAnalogColor:int = 0xFF00BF;  // 0xF80012; // 0x04b4ae; // 0x4a6cd4;
+	public static var cloudServerColor:int = 0xfa8258;
+	public static var arduinoColor:int = 0x04b4ae; 
 	public static var extensionsColor:int = 0x4B4A60; // 0x72228C; // 0x672D79;
 
 	private static const undefinedColor:int = 0xD42828;
@@ -72,7 +89,16 @@ public class Specs {
 		[10, "More Blocks",	procedureColor],
 		[11, "Parameter",	parameterColor],
 		[12, "List",		listColor],
+		[13, "Metas",		0xF80012],
+		[14, "Metas Output Digital", 	metasOutputDigitalColor],
+		[15, "Metas Output Analog",	metasOutputAnalogColor],
+		[16, "Metas Input Digital",	metasInputDigitalColor],
+		[17, "Metas Input Analog",	metasInputAnalogColor],
+		[18, "Cloud Server",  	cloudServerColor],
+		[19, "Arduino",		arduinoColor],
 		[20, "Extension",	extensionsColor],
+		[21, "Metas Combo", metasColor],
+		[22, "Metas Input Digital", metasInputDigitalColor],
 	];
 
 	public static function blockColor(categoryID:int):int {
@@ -117,10 +143,10 @@ public class Specs {
 		["turn @turnLeft %n degrees",			" ", 1, "turnLeft:",				15],
 		["--"],
 		["point in direction %d.direction",		" ", 1, "heading:",					90],
-		["point towards %m.spriteOrMouse",		" ", 1, "pointTowards:",			"mouse-pointer"],
+		["point towards %m.spriteOrMouse",		" ", 1, "pointTowards:",			""],
 		["--"],
 		["go to x:%n y:%n",						" ", 1, "gotoX:y:"],
-		["go to %m.location",					" ", 1, "gotoSpriteOrMouse:",		"mouse-pointer"],
+		["go to %m.spriteOrMouse",				" ", 1, "gotoSpriteOrMouse:",		"mouse-pointer"],
 		["glide %n secs to x:%n y:%n",			" ", 1, "glideSecs:toX:y:elapsed:from:"],
 		["--"],
 		["change x by %n",						" ", 1, "changeXposBy:",			10],
@@ -355,10 +381,144 @@ public class Specs {
 		["-"],
 		["item %d.listItem of %m.list",						"r", 12, "getLine:ofList:"],
 		["length of %m.list",								"r", 12, "lineCountOfList:"],
-		["%m.list contains %s?",								"b", 12, "list:contains:"],
+		["%m.list contains %s?",							"b", 12, "list:contains:"],
 		["-"],
 		["show list %m.list",								" ", 12, "showList:"],
 		["hide list %m.list",								" ", 12, "hideList:"],
+
+		// Metas 
+		["-"],
+		/*
+		["set LED %d.digitalOutPin to %d.onOff",			"S", 14, "setLED:DigitalPin:to:", "digital port", "on"],
+
+		["set bright LED %d.digitalOutPin to %d.onOff", 	"S", 14, "setBrightLED:DigitalPin:to:", "digital port", "on"],
+		["set buzzer %d.digitalOutPin to %d.onOff",			"S", 14, "setBuzzer:DigitalPin:to:", "digital port", "on"],
+		["set bargraph %d.digitalOutPin to %d.onOff",		"S", 14, "setBargraph:DigitalPin:to:", "digital port", "on"],
+		["set vibration motor %d.digitalOutPin to %d.onOff",	"S", 14, "setVibration:DigitalPin:to:", "digital port", "on"],
+		["set motor direction %d.digitalOutPin to %m.clockwise",	"S", 14, "setMotorDirection:DigitalPin:to:", "digital port", "clockwise"], 
+		["set fan %d.digitalOutPin to %d.onOff",			"S", 14, "setFan:DigitalPin:to:", "digital port", "on"],
+		["digital output %d.digitalOutPin to %d.onOff", 	"S", 14, "digitalOutput:DigitalPin:to", "digital port", "on"],
+		["-"],
+		*/
+		["digital output %d.digitalOutPin to %d.onOff", 	"S", 14, "digitalOutput:DigitalPin:to", "digital port", "on"],
+		["-"],
+
+		["set LED %d.pwmPin to %d.pwmValue %",				"S", 15, "setLED:PWMPin:to:", "analog port", 100],
+		["set bright LED %d.pwmPin to %d.pwmValue %",		"S", 15, "setBrightLED:PWMPin:to:", "analog port", 100],
+		["set RGB LED %d.pwmPin to %d.pwmValue %",			"S", 15, "setRGB:PWMPin:to:", "analog port", 100],
+		["set double LED %d.pwmPin to %d.pwmValue %",			"S", 15, "setDoubleLED:PWMPin:to:", "analog port", 100],
+		["set quadro LED %d.pwmPin to %d.pwmValue %",			"S", 15, "setQuadroLED:PWMPin:to:", "analog port", 100],
+		["set bargraph %d.pwmPin to %d.pwmValue %",			"S", 15, "setBargraph:PWMPin:to:", "analog port", 100],
+		["set motor %d.pwmPin to %d.pwmValue %", 			"S", 15, "setMotor:PWMPin:to:", "analog port", 100],
+		["set controllable motor %d.pwmPin to %d.pwmValue %", 	"S", 15, "setControllableMotor:PWMPin:to:", "analog port", 100],
+		["set fan %d.pwmPin to %d.pwmValue %",				"S", 15, "setFan:PWMPin:to:", "analog port", 100],
+		["set buzzer %d.pwmPin to %d.pwmValue %",				"S", 15, "setBuzzer:PWMPin:to:", "analog port", 100],
+		["set servo %d.pwmPin to %d.pwmValue %",				"S", 15, "setServo:PWMPin:to:", "analog port", 100],
+		["set colorful lights %d.pwmPin to %d.pwmValue %",	"S", 15, "setColorfulLights:PWMPin:to:", "analog port", 100],
+		["set USB output converter %d.pwmPin to %d.pwmValue %",	"S", 15, "setUSBConverter:PWMPin:to:", "analog port", 100],
+		["set USB LED light bulb %d.pwmPin to %d.pwmValue %",	"S", 15, "setUSBLED:PWMPin:to:", "analog port", 100],
+		["set voltmeter %d.pwmPin to %d.pwmValue %",			"S", 15, "setVoltmeter:PWMPin:to:", "analog port", 100],
+		["analog output %d.pwmPin to %d.pwmValue %",		"S", 15, "analogOutput:PWMPin:to:", "analog port", 100],
+
+		["-"], 
+		["pulse %d.digitalInPin",							"R", 16, "pulse:DigitalPin", "digital port"],
+		["roller switch %d.digitalInPin",					"R", 16, "rollerSwitch:DigitalPin", "digital port"],
+		["press switch %d.digitalInPin",					"R", 16, "pressSwitch:DigitalPin", "digital port"],
+		["motion trigger %d.digitalInPin",					"R", 16, "motionTrigger:DigitalPin", "digital port"],
+		["lightTrigger %d.digitalInPin",					"R", 16, "lightTrigger:DigitalPin", "digital port"],
+		["reedSwitch %d.digitalInPin",						"R", 16, "reedSwitch:DigitalPin", "digital port"],
+		["touchSwitch %d.digitalInPin",						"R", 16, "touchSwitch:DigitalPin", "digital port"],
+		["thresholdTrigger %d.digitalInPin",				"R", 16, "thresholdTrigger:DigitalPin", "digital port"],
+		["digital input %d.digitalInPin",					"R", 16, "digitalInput:DigitalPin", "digital port"],
+		/*
+		["button %d.digitalInPin",							"R", 16, "button:DigitalPin", "digital port"],
+		["toggle %d.digitalInPin",							"R", 16, "toggle:DigitalPin", "digital port"],
+		["timeout %d.digitalInPin",							"R", 16, "timeout:DigitalPin", "digital port"],
+		["line follower %d.digitalInPin", 					"R", 16, "lineFollower:DigitalPin", "digital port"],	
+		*/
+
+		["-"], 
+		["pulse %d.analogPin",								"R", 22, "pulse:AnalogPin", "analog port"],
+		["roller switch %d.analogPin",						"R", 22, "rollerSwitch:AnalogPin", "analog port"],
+		["press switch %d.analogPin",						"R", 22, "pressSwitch:AnalogPin", "analog port"],
+		["motion trigger %d.analogPin",						"R", 22, "motionTrigger:AnalogPin", "analog port"],
+		["lightTrigger %d.analogPin",						"R", 22, "lightTrigger:AnalogPin", "analog port"],
+		["reedSwitch %d.analogPin",							"R", 22, "reedSwitch:AnalogPin", "analog port"],
+		["touchSwitch %d.analogPin",						"R", 22, "touchSwitch:AnalogPin", "analog port"],
+		["thresholdTrigger %d.analogPin",					"R", 22, "thresholdTrigger:AnalogPin", "analog port"],
+
+		["-"],
+		["dimmer %d.analogPin", 							"R", 17, "dimmer:AnalogPin", "analog port"],
+		["pressure sensor %d.analogPin", 					"R", 17, "pressureSensor:AnalogPin", "analog port"],
+		["light sensor %d.analogPin",						"R", 17, "lightSensor:AnalogPin", "analog port"],
+		["sound sensor %d.analogPin",						"R", 17, "soundSensor:AnalogPin", "analog port"],
+		["gray scale detector %d.analogPin",				"R", 17, "grayScaleDetector:AnalogPin", "analog port"],
+		["remote R/T %d.analogPin",							"R", 17, "remoteRT:AnalogPin", "analog port"],
+		["ultrasonic distance detector %d.analogPin",		"R", 17, "ultrasonic:AnalogPin", "analog port"],
+		// ["ultrasonic distance detector (3m) %d.analogPin",	"R", 17, "ultrasonic3m:AnalogPin", "analog port"],
+		["linear rheostat %d.analogPin",					"R", 17, "linearRheostat:AnalogPin", "analog port"],
+		["IR reflection meter %d.analogPin",				"R", 17, "irreflection:AnalogPin", "analog port"],
+		["analog input %d.analogPin",						"R", 17, "analogInput:AnalogPin", "analog port"],
+		["-"],
+		/*
+		["slider %d.analogPin", 							"R", 17, "slider:AnalogPin", "analog port"],
+		["switch %d.analogPin", 							"R", 17, "switch:AnalogPin", "analog port"],
+		["ultrasonic sensor %d.analogPin", 					"R", 17, "ultrasonicSensor:AnalogPin", "analog port"],
+		// ["-"],
+		["digital output %d.digitalOutPin to %d.onOff", 	"S", 14, "digitalOutput:DigitalPin:to", "digital port", "on"],
+		["analog output %d.pwmPin to %d.pwmValue %",		"S", 15, "analogOutput:PWMPin:to:", "analog port", 100],
+		["digital input %d.digitalInPin",					"R", 16, "digitalInput:DigitalPin", "digital port"],
+		["analog input %d.analogPin",						"R", 17, "analogInput:AnalogPin", "analog port"],
+		*/
+
+		// Metas Combo 
+		/*
+		// DHT11
+		["temperature",										"R", 21, "getDHT11Temperature"],
+		["humidity", 										"R", 21, "getDHT11Humidity"],
+		*/
+		// RGB
+		["initialize RGBW",									" ", 21, "initializeRGBW"],	
+		["RGBW R %d.rgbValue G %d.rgbValue B %d.rgbValue W %d.rgbValue", 	"S", 21, "setRGB:R:G:B:W", 255, 255, 255, 0],
+		// Servo
+		["servo %d.servoPin degree %d.servoDegree",			"S", 21, "servo:degree:", "servo port", 180],
+		
+		// Motor
+		["motor forward",									" ", 21, "motorForward"],
+		["motor backward",									" ", 21, "motorBackward"],
+		["motor left",										" ", 21, "motorLeft"],
+		["motor right",										" ", 21, "motorRight"],
+		["motor stop",										" ", 21, "motorStop"],
+
+		["motor %d.motorPin %d.clockwise to %d.pwmValue",   " ", 21, "motor:MotorPin:Clockwise:PWM", "motor port", "clockwise", 100],
+
+		// Cockroach
+		["cockroach forward %d.servoPin %d.servoPin",		" ", 21, "moveCockroachForward", "servo1", "servo2"],
+		["cockroach backward %d.servoPin %d.servoPin",		" ", 21, "moveCockroachBackward", "servo1", "servo2"],
+		
+		// Arduino
+		["set digital %d.digitalOutPin to %d.highLow", 		"S", 19, "set:DigitalPin:to:", "digital port", "high"],
+		["set pwm %d.pwmPin to %n", 						"S", 19, "setPWMPin:to:", "pwm port", 255],
+		["move servo %d.pwmPin degree %n",					"S", 19, "move:servo:degree:", "pwm port", 180],
+		["digital %d.digitalInPin", 						"R", 19, "digitalPin:", "digital port"],
+		["analog %d.analogPin", 							"R", 19, "analogPin:", "analog port"],
+/*
+		["i2c config read address %m.i2cAddress bytes %n",	" ", 19, "i2cConfig:address:bytes:"],
+		["i2c address %m.i2cAddress data available",		"b", 19, "i2c:dataAvailable:"],
+		["i2c read address %m.i2cAddress byte %n",			"r", 19, "i2cRead:address:"],
+*/
+		["map value %n from low %n high %n to low %n high %n",	"r", 19, "map:fromLow:high:toLow:high:", 0, 0, 1024, 0, 255],
+		["-"],
+/*
+		// I2C - for testing purposes
+		["read i2c %n %n %n", 	"R", 19, "readI2C:address:register:bytes:", "address", "register", "num bytes"],
+		["write i2c %n %n %s",	" ", 19, "writeI2C:address:register:data:", "address", "register", "data"],
+*/
+
+		// Cloud Server
+		["temperature in %m.cities", 			"r", 18, "getTemperatureInCity:", "city"],
+		["convert celsius %n to fahrenheit",	"r", 18, "convertCtoF:", 37.5], 
+		["traffic condition at %m.roads", 		"r", 18, "getTrafficCondition:", "road"],
 
 		// obsolete blocks from Scratch 1.4 that may be used in older projects
 		["play drum %n for %n beats",			" ", 98, "drum:duration:elapsed:from:", 1, 0.25], // Scratch 1.4 MIDI drum

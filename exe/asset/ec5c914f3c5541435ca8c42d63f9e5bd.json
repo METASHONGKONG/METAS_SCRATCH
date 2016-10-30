@@ -1,0 +1,36 @@
+{
+	"objName": "Buzzer",
+	"sounds": [{
+			"soundName": "pop",
+			"soundID": -1,
+			"md5": "83a9787d4cb6f3b7632b4ddfebf74367.wav",
+			"sampleCount": 258,
+			"rate": 11025,
+			"format": ""
+		}],
+	"costumes": [{
+			"costumeName": "Buzzer",
+			"baseLayerID": -1,
+			"baseLayerMD5": "ec5c914f3c5541435ca8c42d63f9e5bd.svg",
+			"bitmapResolution": 1,  
+			"rotationCenterX": 54,
+			"rotationCenterY": 54
+		}],
+	"currentCostumeIndex": 0,
+	"scratchX": 0,
+	"scratchY": 0,
+	"scale": 1,
+	"direction": 90,
+	"rotationStyle": "normal",
+	"isDraggable": false,
+	"indexInLibrary": 100000,
+	"visible": true,
+	"spriteInfo": {
+	},
+	"scripts": [[10, 10, [["whenGreenFlag"], ["connectArduinoViaType:", "port1"], ["call", "turn Buzzer on"]]],
+		[10, 105,
+			[["procDef", "turn Buzzer on", [], [], false], ["set:DigitalPin:to:", "port1", 5, "high"]]],
+		[10, 193, 
+			[["procDef", "turn Buzzer off", [], [], false], ["set:DigitalPin:to:", "port1", 5, "low"]]]]
+
+}

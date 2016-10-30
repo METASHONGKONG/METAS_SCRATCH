@@ -88,6 +88,10 @@ public class Primitives {
 	protected function addOtherPrims(primTable:Dictionary):void {
 		new SensingPrims(app, interp).addPrimsTo(primTable);
 		new ListPrims(app, interp).addPrimsTo(primTable);
+
+		// Additional Prims
+		new ArduinoPrims(app, interp).addPrimsTo(primTable);
+		new CloudServerPrims(app, interp).addPrimsTo(primTable);
 	}
 
 	private function primRandom(b:Block):Number {

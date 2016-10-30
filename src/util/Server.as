@@ -88,6 +88,9 @@ public class Server implements IServer {
 	}
 
 	protected function getCdnStaticSiteURL():String {
+		if (Scratch.app.isOffline) {
+			return "";
+		}
 		return URLs.siteCdnPrefix + URLs.staticFiles;
 	}
 
@@ -134,7 +137,7 @@ public class Server implements IServer {
 		if (event is SecurityErrorEvent) {
 			var urlPathStart:int = url.indexOf('/', 10);
 			var policyFileURL:String = url.substr(0, urlPathStart) + '/crossdomain.xml?cb=' + Math.random();
-			Security.loadPolicyFile(policyFileURL);
+			// Security.loadPolicyFile(policyFileURL);
 			Scratch.app.log(LogLevel.WARNING, 'Reloading policy file', {policy: policyFileURL, initiator: url});
 		}
 	}
@@ -253,7 +256,14 @@ public class Server implements IServer {
 //			whenDone(BackpackPart.localAssets[md5]);
 //			return null;
 //		}
-		var url:String = URLs.assetCdnPrefix + URLs.internalAPI + 'asset/' + md5 + '/get/';
+		var url:String; 
+		if (Scratch.app.isOffline) {
+			url = 'asset/' + md5;
+		}
+		else {
+			url = URLs.assetCdnPrefix + URLs.internalAPI + 'asset/' + md5 + '/get/';
+		}
+		Scratch.app.logDebug('url: ' + url);
 		return serverGet(url, whenDone);
 	}
 
@@ -305,7 +315,13 @@ public class Server implements IServer {
 	}
 
 	public function getThumbnail(idAndExt:String, w:int, h:int, whenDone:Function):URLLoader {
-		var url:String = getCdnStaticSiteURL() + 'medialibrarythumbnails/' + idAndExt;
+		var url:String;
+		if (Scratch.app.isOffline) {
+			url = 'asset/' + idAndExt;
+		}
+		else {
+			url = getCdnStaticSiteURL() + 'medialibrarythumbnails/' + idAndExt;
+		}
 		return downloadThumbnail(url, w, h, whenDone);
 	}
 

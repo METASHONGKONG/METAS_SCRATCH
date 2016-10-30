@@ -295,15 +295,14 @@ public class BlockIO {
 			'gotoSpriteOrMouse:', 'pointTowards:', 'touching:'];
 		if (refCmds.indexOf(b.op) < 0) return;
 		var arg:BlockArg;
-		if ((b.args.length == 1) && (b.getNormalizedArg(0) is BlockArg)) arg = b.getNormalizedArg(0);
-		if ((b.args.length == 2) && (b.getNormalizedArg(1) is BlockArg)) arg = b.getNormalizedArg(1);
+		if ((b.args.length == 1) && (b.args[0] is BlockArg)) arg = b.args[0];
+		if ((b.args.length == 2) && (b.args[1] is BlockArg)) arg = b.args[1];
 		if (arg) {
 			var oldVal:String = arg.argValue;
 			if (oldVal == 'edge' || oldVal == '_edge_') arg.setArgValue('_edge_', Translator.map('edge'));
 			if (oldVal == 'mouse' || oldVal == '_mouse_') arg.setArgValue('_mouse_', Translator.map('mouse-pointer'));
 			if (oldVal == '_myself_') arg.setArgValue('_myself_', Translator.map('myself'));
 			if (oldVal == '_stage_') arg.setArgValue('_stage_', Translator.map('Stage'));
-			if (oldVal == '_random_') arg.setArgValue('_random_', Translator.map('random position'));
 		}
 	}
 

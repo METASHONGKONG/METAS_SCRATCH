@@ -1,0 +1,54 @@
+{
+	"objName": "Blinking LED",
+	"sounds": [{
+			"soundName": "pop",
+			"soundID": -1,
+			"md5": "83a9787d4cb6f3b7632b4ddfebf74367.wav",
+			"sampleCount": 258,
+			"rate": 11025,
+			"format": ""
+		}],
+	"costumes": [{
+			"costumeName": "LED-Off",
+			"baseLayerID": -1,
+			"baseLayerMD5": "c8dce552510bd0dbb505a2bb2c693bdc.png",
+			"bitmapResolution": 2,
+			"rotationCenterX": 128,
+			"rotationCenterY": 192
+		}, 
+		{
+			"costumeName": "LED-On",
+			"baseLayerID": -1,
+			"baseLayerMD5": "5290bdfba4deec727ac8a2e4108c089f.png",
+			"bitmapResolution": 2,
+			"rotationCenterX": 256,
+			"rotationCenterY": 322
+		}],
+	"currentCostumeIndex": 0,
+	"scratchX": 0,
+	"scratchY": 0,
+	"scale": 0.5,
+	"direction": 90,
+	"rotationStyle": "normal",
+	"isDraggable": false,
+	"indexInLibrary": 100000,
+	"visible": true,
+	"spriteInfo": {
+	},
+	"scripts": [[10,
+		10,
+		[["whenConnectionConnected", "connection1"],
+			["doRepeat",
+				10,
+				[["call", "turn LED on"], ["wait:elapsed:from:", 1], ["call", "turn LED off"], ["wait:elapsed:from:", 1]]]]],
+		[10,
+			179,
+			[["procDef", "turn LED on", [], [], false],
+				["set:DigitalPin:to:", "connection1", 13, "high"],
+				["lookLike:", "LED-On"]]],
+		[10,
+			288,
+			[["procDef", "turn LED off", [], [], false],
+				["set:DigitalPin:to:", "connection1", 13, "low"],
+				["lookLike:", "LED-Off"]]]]
+}

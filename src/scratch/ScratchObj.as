@@ -314,7 +314,7 @@ public class ScratchObj extends Sprite {
 
 		if ((['broadcast:', 'doBroadcastAndWait', 'whenIReceive'].indexOf(op)) > -1) {
 			var msgs:Array = Scratch.app.runtime.collectBroadcasts();
-			return [msgs[0]];
+			return (msgs.length > 0) ? [msgs[0]] : ['message1'];
 		}
 		if ((['lookLike:', 'startScene', 'startSceneAndWait', 'whenSceneStarts'].indexOf(op)) > -1) {
 			return [costumes[costumes.length - 1].costumeName];
@@ -346,6 +346,32 @@ public class ScratchObj extends Sprite {
 		if ('list:contains:' == op) return [defaultListName(), 'thing'];
 		if ('showList:' == op) return [defaultListName()];
 		if ('hideList:' == op) return [defaultListName()];
+
+		// Arduino
+		var addresses:Array = null;
+		var address:String = null;
+
+		if ('i2cConfig:address:bytes:' == op) {
+			addresses = Scratch.app.runtime.collectAddresses();
+			address = (addresses.length > 0) ? addresses[0]:'address1';
+
+			return [address, 2];
+		}
+
+		if ('i2c:dataAvailable:' == op) {
+			addresses = Scratch.app.runtime.collectAddresses();
+			address = (addresses.length > 0) ? addresses[0]:'address1';
+
+			return [address];
+		}
+
+		if ('i2cRead:address:' == op) {
+			addresses = Scratch.app.runtime.collectAddresses();
+			address = (addresses.length > 0) ? addresses[0]:'address1';
+
+			return [address, 1];
+		}
+
 
 		return specDefaults;
 	}
