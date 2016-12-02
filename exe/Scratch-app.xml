@@ -3,7 +3,7 @@
 	<versionNumber>1.0</versionNumber>
 	<filename>Metas Scratch - based on MIT Scratch</filename>
 	<initialWindow>
-		<content>exe/Scratch.swf</content>
+		<content>Scratch.swf</content>
 		<visible>true</visible>
 		<maximizable>true</maximizable>
 		<width>1200</width>
