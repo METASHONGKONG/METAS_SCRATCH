@@ -1,0 +1,18 @@
+<application xmlns="http://ns.adobe.com/air/application/20.0">
+	<id>com.coding101.Scratch</id>
+	<versionNumber>1.0</versionNumber>
+	<filename>MetasScratch</filename>
+	<icon> 
+		<image16x16>icon/icon16.png</image16x16> 
+		<image32x32>icon/icon32.png</image32x32> 
+		<image48x48>icon/icon48.png</image48x48> 
+		<image128x128>icon/icon128.png</image128x128>  
+	</icon>
+	<initialWindow>
+		<content>Scratch.swf</content>
+		<visible>true</visible>
+		<width>1000</width>
+		<height>800</height>
+		<minSize>600 400</minSize>
+	</initialWindow>
+</application>
